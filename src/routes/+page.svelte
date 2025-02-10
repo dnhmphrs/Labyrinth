@@ -7,6 +7,13 @@
     let currentPosition = { x: 0, y: 0 };
     let grid = mazeConfig.grid;
     
+    function preloadImages() {
+        grid.flat().forEach(square => {
+            const img = new Image();
+            img.src = square.image;
+        });
+    }
+    
     function handleKeydown(event) {
         const key = event.key;
         if (!key.startsWith('Arrow')) return;
@@ -26,6 +33,7 @@
     }
     
     onMount(() => {
+        preloadImages();
         window.addEventListener('keydown', handleKeydown);
         return () => window.removeEventListener('keydown', handleKeydown);
     });
