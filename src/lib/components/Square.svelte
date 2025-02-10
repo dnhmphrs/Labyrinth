@@ -1,6 +1,6 @@
 <script lang="ts">
-    export let image: string | undefined = undefined;
-    export let size: string = '200px';
+    export let image = undefined;
+    export let size = '100%';
 </script>
 
 <div 

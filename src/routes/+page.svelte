@@ -6,6 +6,15 @@
     
     let currentPosition = { x: 0, y: 0 };
     let grid = mazeConfig.grid;
+    let squareSize = 0;
+    
+    function calculateSize() {
+        const gap = 32; // 2rem gap between squares
+        const pageMargin = gap; // Make page margin same as gap
+        const minScreenDim = Math.min(window.innerWidth, window.innerHeight);
+        // Size for 3 squares plus 2 gaps, with equal margins
+        squareSize = (minScreenDim - (4 * gap)) / 3;
+    }
     
     function preloadImages() {
         grid.flat().forEach(square => {
@@ -33,9 +42,14 @@
     }
     
     onMount(() => {
+        calculateSize();
+        window.addEventListener('resize', calculateSize);
         preloadImages();
         window.addEventListener('keydown', handleKeydown);
-        return () => window.removeEventListener('keydown', handleKeydown);
+        return () => {
+            window.removeEventListener('resize', calculateSize);
+            window.removeEventListener('keydown', handleKeydown);
+        };
     });
     
     $: currentSquare = grid[currentPosition.y][currentPosition.x];
@@ -63,13 +77,13 @@
 
 <div class="maze-container">
     <div class="maze-grid">
-        <div class="row"><Square image={adjacentSquares.up?.image} /></div>
-        <div class="row middle">
-            <Square image={adjacentSquares.left?.image} />
-            <Square image={currentSquare.image} />
-            <Square image={adjacentSquares.right?.image} />
+        <div class="row"><Square image={adjacentSquares.up?.image} size="{squareSize}px" /></div>
+        <div class="row">
+            <Square image={adjacentSquares.left?.image} size="{squareSize}px" />
+            <Square image={currentSquare.image} size="{squareSize}px" />
+            <Square image={adjacentSquares.right?.image} size="{squareSize}px" />
         </div>
-        <div class="row"><Square image={adjacentSquares.down?.image} /></div>
+        <div class="row"><Square image={adjacentSquares.down?.image} size="{squareSize}px" /></div>
     </div>
 </div>
 
@@ -79,6 +93,7 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        padding: 2rem;
     }
     
     .keypress-history {
@@ -100,9 +115,5 @@
         display: flex;
         gap: 2rem;
         justify-content: center;
-    }
-
-    .row.middle {
-        margin: 2rem 0;
     }
 </style>
